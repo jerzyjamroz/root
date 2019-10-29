@@ -1,0 +1,35 @@
+[Unit]
+Description=%N
+Documentation="https://confluence.esss.lu.se/display/HAR/ESS+Timing+System"
+#ConditionHost=td0.esss.lu.se
+After=network.target remote-fs.target syslog.target
+Requires=multi-user.target
+
+[Service]
+Type=simple
+Environment=SITEAPP=/epics/iocs/timing
+Environment=REQIOREAPP=/epics/base-3.15.5/require/3.0.4
+WorkingDirectory=${SITEAPP}
+User=iocuser
+Group=iocgroup
+SyslogIdentifier=%N
+RuntimeDirectory=${SITEAPP}
+RuntimeDirectoryMode=0775
+PermissionsStartOnly=true
+ExecStartPre=/bin/chown -R iocuser:iocgroup ${SITEAPP}
+
+
+ExecStart=/usr/bin/procServ \
+                --foreground \
+                --logfile=${SITEAPP}/log/%N \
+		--info-file=${SITEAPP}/info \
+                --ignore=^C^D \
+                --chdir=${SITEAPP}/run/ \
+                --name=%i \
+                --port=2000 \
+                ${REQIOREAPP}/bin/iocsh.bash \
+                ${SITEAPP}/%i.cmd
+
+
+[Install]
+WantedBy=multi-user.target
