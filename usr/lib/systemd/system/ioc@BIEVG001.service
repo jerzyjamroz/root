@@ -1,5 +1,3 @@
-ioc@BIEVG001.service
-iocuser@ip5-33: systemd$ cat /usr/lib/systemd/system/ioc@BIEVG001.service
 [Unit]
 Description=procServ for PBI EVG001
 After=network.target remote-fs.target
